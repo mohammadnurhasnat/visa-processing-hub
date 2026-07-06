@@ -1,0 +1,6 @@
+{
+  "name": "Visa Processing Hub",
+  "description": "Premium Indian visa processing agency in Dhaka, specializing in tourist, medical, business, and double-entry visas with seamless documentation services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
