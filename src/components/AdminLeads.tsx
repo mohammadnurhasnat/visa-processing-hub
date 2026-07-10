@@ -1,6 +1,8 @@
-import { useState, useEffect, FormEvent } from 'react';
-import { Shield, RefreshCw, Trash2, Eye, ExternalLink, Database, Activity, CheckCircle2, AlertCircle, X, KeyRound, LogOut, Lock } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { RefreshCw, Trash2, Database, Activity, X, LogOut, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import AdminLogin from './AdminLogin';
+import AdminLeadsList from './AdminLeadsList';
 
 interface AdminLeadsProps {
   isOpen?: boolean;
@@ -26,17 +28,13 @@ export default function AdminLeads({ isOpen: propIsOpen, onClose, onOpen }: Admi
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Auth States
+  // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     if (typeof window !== 'undefined') {
       return sessionStorage.getItem('isAdminAuthenticated') === 'true';
     }
     return false;
   });
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [authError, setAuthError] = useState('');
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const fetchLeads = async () => {
     if (!isAuthenticated) return;
@@ -64,29 +62,14 @@ export default function AdminLeads({ isOpen: propIsOpen, onClose, onOpen }: Admi
     }
   };
 
-  const handleLogin = (e: FormEvent) => {
-    e.preventDefault();
-    setAuthError('');
-    setIsLoggingIn(true);
-
-    setTimeout(() => {
-      const trimmedEmail = email.trim().toLowerCase();
-      if (trimmedEmail === 'mohammadnurhasnat@gmail.com' && password === 'Turbo5max#') {
-        setIsAuthenticated(true);
-        sessionStorage.setItem('isAdminAuthenticated', 'true');
-        setAuthError('');
-      } else {
-        setAuthError('ভুল ইমেইল অথবা পাসওয়ার্ড! অনুগ্রহ করে আবার চেষ্টা করুন।');
-      }
-      setIsLoggingIn(false);
-    }, 600);
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    sessionStorage.setItem('isAdminAuthenticated', 'true');
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('isAdminAuthenticated');
-    setEmail('');
-    setPassword('');
     setLeads([]);
     setSelectedLead(null);
   };
@@ -171,167 +154,13 @@ export default function AdminLeads({ isOpen: propIsOpen, onClose, onOpen }: Admi
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {!isAuthenticated ? (
-                /* Login screen */
-                <div className="max-w-md mx-auto py-4 flex flex-col justify-center h-full">
-                  <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-400 shadow-xl shadow-emerald-950/20">
-                      <KeyRound size={28} />
-                    </div>
-                    <h4 className="text-xl font-bold text-white mb-1.5">অ্যাডমিন প্রবেশদ্বার</h4>
-                    <p className="text-slate-400 text-xs leading-relaxed">
-                      অটোমেশন গেটওয়েতে প্রবেশ করতে ইমেইল এবং পাসওয়ার্ড দিয়ে লগইন করুন
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    {authError && (
-                      <div className="bg-red-950/35 border border-red-800/40 text-red-300 text-xs p-3.5 rounded-xl flex items-center gap-2.5">
-                        <AlertCircle size={16} className="text-red-400 shrink-0" />
-                        <span>{authError}</span>
-                      </div>
-                    )}
-
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">ইমেইল / Email</label>
-                      <input 
-                        type="email" 
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="mohammadnurhasnat@gmail.com" 
-                        className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-sm transition-all"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">পাসওয়ার্ড / Password</label>
-                      <input 
-                        type="password" 
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••" 
-                        className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-sm transition-all"
-                      />
-                    </div>
-
-                    <button 
-                      type="submit"
-                      disabled={isLoggingIn}
-                      className="w-full bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 text-sm disabled:opacity-50"
-                    >
-                      {isLoggingIn ? (
-                        <>
-                          <RefreshCw size={16} className="animate-spin" />
-                          যাচাই করা হচ্ছে...
-                        </>
-                      ) : (
-                        <>
-                          <Shield size={16} />
-                          লগইন করুন / Admin Login
-                        </>
-                      )}
-                    </button>
-                  </form>
-
-                  {/* Hint Box for Testing convenience */}
-                  <div className="mt-6 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 text-xs space-y-1">
-                    <p className="text-slate-300 font-bold flex items-center gap-1">
-                      <CheckCircle2 size={12} className="text-emerald-400" />
-                      Test Admin Credentials (টেস্ট লগইন তথ্য):
-                    </p>
-                    <div className="text-slate-400 space-y-0.5">
-                      <p><span className="font-semibold text-slate-300">Email:</span> mohammadnurhasnat@gmail.com</p>
-                      <p><span className="font-semibold text-slate-300">Password:</span> Turbo5max#</p>
-                    </div>
-                  </div>
-                </div>
+                <AdminLogin onLoginSuccess={handleLoginSuccess} />
               ) : (
-                /* Authenticated State: Active Leads list */
-                leads.length === 0 ? (
-                  <div className="text-center py-16 text-slate-500">
-                    <Database size={48} className="mx-auto mb-4 text-slate-700" />
-                    <p className="text-sm font-semibold mb-1 text-slate-400">No leads captured yet</p>
-                    <p className="text-xs max-w-xs mx-auto text-slate-500">
-                      Interact with the **Visa Hub AI Assistant** on the bottom right, state your name and ask about a visa to generate automated reports.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Captured Real-time Leads</p>
-                    {leads.map((lead, i) => (
-                      <div 
-                        key={lead.id || i}
-                        className={`p-4 rounded-2xl border transition-all cursor-pointer ${
-                          selectedLead?.id === lead.id 
-                            ? 'bg-slate-900 border-emerald-500/50' 
-                            : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
-                        }`}
-                        onClick={() => setSelectedLead(selectedLead?.id === lead.id ? null : lead)}
-                      >
-                        <div className="flex justify-between items-start gap-4 mb-2">
-                          <div>
-                            <h4 className="font-bold text-white text-sm">
-                              {lead.CustomerName || "Unknown Guest"}
-                            </h4>
-                            <p className="text-xs text-slate-400">{lead.CoreQuery}</p>
-                          </div>
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${
-                            lead.Status === 'Lead Captured' 
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                              : lead.Status === 'Pending Human' 
-                              ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' 
-                              : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                          }`}>
-                            {lead.Status}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between items-center text-xs text-slate-500 pt-2 border-t border-slate-800/60">
-                          <span>Platform: {lead.Platform || "Website"}</span>
-                          <span>{lead.timestamp}</span>
-                        </div>
-
-                        {/* Expanded View with JSON Summary for Make.com Extraction */}
-                        {selectedLead?.id === lead.id && (
-                          <motion.div 
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className="mt-4 pt-4 border-t border-slate-800 space-y-3 text-xs"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <div>
-                              <span className="text-slate-400 font-bold block mb-1">Key Information Sought</span>
-                              <p className="text-slate-300 bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 leading-relaxed">
-                                {lead.KeyInformationSought}
-                              </p>
-                            </div>
-
-                            <div>
-                              <span className="text-slate-400 font-bold block mb-1.5 flex items-center gap-1.5">
-                                <ExternalLink size={12} className="text-emerald-400" />
-                                Structured JSON Payload (Webhook ready)
-                              </span>
-                              <pre className="bg-slate-950 p-3 rounded-xl text-emerald-400 font-mono text-[10px] overflow-x-auto border border-slate-800/80">
-                                {JSON.stringify({
-                                  event: "new_lead",
-                                  payload: {
-                                    name: lead.CustomerName,
-                                    platform: lead.Platform,
-                                    query: lead.CoreQuery,
-                                    status: lead.Status,
-                                    key_info: lead.KeyInformationSought,
-                                    extracted_at: lead.timestamp
-                                  }
-                                }, null, 2)}
-                              </pre>
-                            </div>
-                          </motion.div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )
+                <AdminLeadsList 
+                  leads={leads} 
+                  selectedLead={selectedLead} 
+                  onSelectLead={setSelectedLead} 
+                />
               )}
             </div>
           </motion.div>

@@ -7,48 +7,42 @@ const services = [
     desc: 'General tourism and sightseeing visas for exploring the beauty of India.',
     icon: Globe,
     color: 'bg-blue-50 text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white',
-    hoverBorder: 'hover:border-blue-200 hover:shadow-blue-600/5'
   },
   {
     title: 'Medical Visa',
     desc: 'Specialized hospital + attendant visas with fast-track processing for urgent care.',
     icon: HeartPulse,
     color: 'bg-red-50 text-red-600 border border-red-100 group-hover:bg-red-600 group-hover:text-white',
-    hoverBorder: 'hover:border-red-200 hover:shadow-red-600/5'
   },
   {
     title: 'Double Entry Visa',
     desc: 'Convenient double entry visas for embassy interviews and multiple visits.',
     icon: RefreshCw,
     color: 'bg-green-50 text-green-600 border border-green-100 group-hover:bg-green-600 group-hover:text-white',
-    hoverBorder: 'hover:border-green-200 hover:shadow-green-600/5'
   },
   {
     title: 'Business Visa',
     desc: 'Official visas for business meetings, trade fairs, and international conferences.',
     icon: Briefcase,
     color: 'bg-purple-50 text-purple-600 border border-purple-100 group-hover:bg-purple-600 group-hover:text-white',
-    hoverBorder: 'hover:border-purple-200 hover:shadow-purple-600/5'
   },
   {
     title: 'Visa Documentation',
     desc: 'Professional assistance for all types of visa documentation and paperwork.',
     icon: FileText,
     color: 'bg-orange-50 text-orange-600 border border-orange-100 group-hover:bg-orange-600 group-hover:text-white',
-    hoverBorder: 'hover:border-orange-200 hover:shadow-orange-600/5'
   },
   {
     title: 'Emergency Visa Assistance',
     desc: 'Urgent visa support for immediate travel requirements or emergency bookings.',
     icon: Zap,
     color: 'bg-amber-50 text-amber-600 border border-amber-100 group-hover:bg-amber-600 group-hover:text-white',
-    hoverBorder: 'hover:border-amber-200 hover:shadow-amber-600/5'
   }
 ];
 
 export default function Services() {
   return (
-    <section id="services" className="py-24 bg-gradient-to-b from-white to-gray-50 border-b border-gray-100">
+    <section id="services" className="pt-32 pb-24 md:pt-36 md:pb-28 bg-gradient-to-b from-white to-gray-50/50 border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <motion.div
@@ -57,7 +51,9 @@ export default function Services() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 bg-blue-50 px-3 py-1 rounded-full inline-block border border-blue-100">Our Core Services</h2>
+            <div className="flex justify-center mb-3">
+              <span className="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Our Core Services</span>
+            </div>
             <p className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight font-display">
               Indian Visa Specialists
             </p>
@@ -75,7 +71,7 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
-              className={`group p-8 rounded-3xl border border-gray-200/70 bg-white hover:shadow-2xl ${service.hoverBorder} hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between`}
+              className="group p-8 rounded-3xl border border-gray-200/90 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.06)] hover:border-blue-200/90 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 <div className={`w-14 h-14 rounded-2xl ${service.color} flex items-center justify-center mb-6 transition-all duration-300`}>

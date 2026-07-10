@@ -60,7 +60,7 @@ export default function Packages() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
-              className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl shadow-gray-100/70 border border-gray-200/60 group hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-blue-600/5 transition-all duration-300"
+              className="bg-white rounded-[2rem] overflow-hidden border border-gray-200/90 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.05)] hover:border-blue-200 hover:-translate-y-2 transition-all duration-300 group"
             >
               <div className="relative h-72 overflow-hidden">
                 <img 
