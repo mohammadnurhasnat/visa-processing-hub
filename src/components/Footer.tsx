@@ -13,7 +13,7 @@ export default function Footer() {
                 <Plane className="text-white w-5 h-5" />
               </div>
               <span className="text-xl font-black tracking-tight text-gray-900 font-display">
-                Visa Processing <span className="text-blue-600">Hub</span>
+                Processing <span className="text-blue-600">Hub</span>
               </span>
             </div>
             <p className="text-sm leading-relaxed text-gray-600">
@@ -99,7 +99,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-gray-500">
-          <p>© {new Date().getFullYear()} Visa Processing Hub. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Processing Hub. All rights reserved.</p>
           <div className="flex gap-4">
             <a href="#" className="hover:text-gray-900 transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-gray-900 transition-colors">Terms of Service</a>

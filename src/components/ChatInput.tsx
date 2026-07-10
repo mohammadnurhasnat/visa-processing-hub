@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Send } from 'lucide-react';
 
 interface ChatInputProps {
@@ -8,10 +9,17 @@ interface ChatInputProps {
 }
 
 export default function ChatInput({ message, setMessage, onSend, isLoading }: ChatInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <div className="p-4 border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-300">
       <div className="flex gap-2">
         <input
+          ref={inputRef}
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}

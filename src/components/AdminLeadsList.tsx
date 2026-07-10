@@ -14,7 +14,7 @@ export default function AdminLeadsList({ leads, selectedLead, onSelectLead }: Ad
         <Database size={48} className="mx-auto mb-4 text-slate-700" />
         <p className="text-sm font-semibold mb-1 text-slate-400">No leads captured yet</p>
         <p className="text-xs max-w-xs mx-auto text-slate-500">
-          Interact with the **Visa Hub AI Assistant** on the bottom right, state your name and ask about a visa to generate automated reports.
+          Interact with the **Processing Hub Assistant** on the bottom right, state your name and ask about a visa to generate automated reports.
         </p>
       </div>
     );

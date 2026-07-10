@@ -1,11 +1,12 @@
 import { MessageSquare, Loader2, UserCheck, User, Phone, Mail, CheckCircle, ChevronDown } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
 
 interface ChatMessage {
   role: 'user' | 'bot';
   content: string;
   showContactForm?: boolean;
+  timestamp?: string;
 }
 
 interface ChatHistoryListProps {
@@ -216,7 +217,8 @@ function formatMessage(content: string, isUser: boolean) {
     return <span className="whitespace-pre-wrap">{content}</span>;
   }
 
-  const lines = content.split('\n');
+  const cleanContent = content.replace(/\[SHOW_CONTACT_FORM\]/gi, '').trim();
+  const lines = cleanContent.split('\n');
   const renderedElements: React.ReactNode[] = [];
   let currentListItems: React.ReactNode[] = [];
   
@@ -280,8 +282,28 @@ function formatMessage(content: string, isUser: boolean) {
 }
 
 export default function ChatHistoryList({ chatHistory, isLoading, isHandover, onFormSubmit }: ChatHistoryListProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+    const timer = setTimeout(scrollToBottom, 100);
+    return () => clearTimeout(timer);
+  }, [chatHistory, isLoading, isHandover]);
+
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50 dark:bg-slate-950/40">
+    <div 
+      ref={containerRef}
+      className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50 dark:bg-slate-950/40 scroll-smooth"
+    >
       {chatHistory.length === 0 && (
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-blue-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100 dark:border-slate-700">
@@ -307,12 +329,14 @@ export default function ChatHistoryList({ chatHistory, isLoading, isHandover, on
       )}
       {chatHistory.map((chat, i) => (
         <div key={i} className={`flex ${chat.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-          <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${
+          <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed flex flex-col gap-1 ${
             chat.role === 'user' 
               ? 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-600/5' 
               : 'bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 rounded-tl-none border border-gray-100 dark:border-slate-800 shadow-sm'
           }`}>
-            {formatMessage(chat.content, chat.role === 'user')}
+            <div className="flex-1">
+              {formatMessage(chat.content, chat.role === 'user')}
+            </div>
             
             {/* Display the inline contact form inside the bot message bubble if triggered, unless submitted in last 24 hours */}
             {chat.role === 'bot' && chat.showContactForm && onFormSubmit && (() => {
@@ -326,6 +350,22 @@ export default function ChatHistoryList({ chatHistory, isLoading, isHandover, on
                 }} />
               );
             })()}
+
+            {chat.timestamp && (
+              <div className={`text-[9px] self-end mt-1 select-none font-medium ${
+                chat.role === 'user' ? 'text-blue-200/80' : 'text-gray-400 dark:text-slate-500'
+              }`}>
+                {(() => {
+                  try {
+                    const date = new Date(chat.timestamp);
+                    if (!isNaN(date.getTime())) {
+                      return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                    }
+                  } catch (e) {}
+                  return '';
+                })()}
+              </div>
+            )}
           </div>
         </div>
       ))}

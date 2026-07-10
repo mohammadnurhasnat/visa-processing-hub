@@ -7,24 +7,28 @@ const services = [
     desc: 'General tourism and sightseeing visas for exploring the beauty of India.',
     icon: Globe,
     color: 'bg-blue-50 text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white',
+    rates: { slot: '৳6,000', full: '৳8,000' }
   },
   {
     title: 'Medical Visa',
     desc: 'Specialized hospital + attendant visas with fast-track processing for urgent care.',
     icon: HeartPulse,
     color: 'bg-red-50 text-red-600 border border-red-100 group-hover:bg-red-600 group-hover:text-white',
+    rates: { slot: '৳6,000', full: '৳8,000' }
   },
   {
     title: 'Double Entry Visa',
     desc: 'Convenient double entry visas for embassy interviews and multiple visits.',
     icon: RefreshCw,
     color: 'bg-green-50 text-green-600 border border-green-100 group-hover:bg-green-600 group-hover:text-white',
+    rates: { slot: '৳25,000', full: '৳28,500' }
   },
   {
     title: 'Business Visa',
     desc: 'Official visas for business meetings, trade fairs, and international conferences.',
     icon: Briefcase,
     color: 'bg-purple-50 text-purple-600 border border-purple-100 group-hover:bg-purple-600 group-hover:text-white',
+    rates: { slot: '৳6,000', full: '৳8,000' }
   },
   {
     title: 'Visa Documentation',
@@ -78,11 +82,24 @@ export default function Services() {
                   <service.icon size={26} />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight font-display group-hover:text-blue-600 transition-colors duration-300">{service.title}</h3>
-                <p className="text-gray-600 leading-relaxed mb-6 text-sm">
+                <p className="text-gray-600 leading-relaxed mb-4 text-sm">
                   {service.desc}
                 </p>
+
+                {service.rates && (
+                  <div className="my-4 pt-4 border-t border-gray-100 space-y-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-gray-500 font-semibold">Only Slot:</span>
+                      <span className="font-extrabold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{service.rates.slot}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-gray-500 font-semibold">Full Processing + Documentation:</span>
+                      <span className="font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{service.rates.full}</span>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-blue-600 font-semibold text-sm border-t border-gray-100 pt-4 mt-auto">
+              <div className="flex items-center gap-2 text-blue-600 font-semibold text-sm border-t border-gray-100 pt-4 mt-4">
                 <CheckCircle size={16} className="text-blue-500" />
                 <span>Expert Support Guaranteed</span>
               </div>

@@ -4,6 +4,25 @@ import { motion, AnimatePresence } from 'motion/react';
 import ChatHistoryList from './ChatHistoryList';
 import ChatInput from './ChatInput';
 
+function cleanStreamingText(text: string): string {
+  let cleaned = text;
+  
+  // Remove completed <lead_report>...</lead_report>
+  cleaned = cleaned.replace(/<lead_report>[\s\S]*?<\/lead_report>/g, "");
+  
+  // Remove partial <lead_report>
+  const reportIndex = cleaned.indexOf("<lead_report>");
+  if (reportIndex !== -1) {
+    cleaned = cleaned.substring(0, reportIndex);
+  }
+  
+  // Remove special tags
+  cleaned = cleaned.replace(/\[TRIGGER_HUMAN_HANDOVER\]/gi, "");
+  cleaned = cleaned.replace(/\[SHOW_CONTACT_FORM\]/gi, "");
+  
+  return cleaned.trim();
+}
+
 interface ChatWidgetProps {
   isOpen?: boolean;
   onClose?: () => void;
@@ -14,6 +33,51 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = propIsOpen !== undefined ? propIsOpen : internalIsOpen;
 
+  const [message, setMessage] = useState('');
+  
+  // Persisted chat history state
+  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'bot', content: string, showContactForm?: boolean, timestamp?: string }[]>(() => {
+    try {
+      const saved = localStorage.getItem('visa_hub_chat_history');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Detect if running inside Google AI Studio / dev sandbox
+  const isAIStudioPreview = typeof window !== 'undefined' && (
+    window.location.hostname.includes('run.app') || 
+    window.location.hostname.includes('localhost') || 
+    window.location.hostname.includes('127.0.0.1') || 
+    window.location.hostname.includes('ai.studio')
+  );
+
+  // Admin authentication check state
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = () => {
+      if (typeof window !== 'undefined') {
+        setIsAdmin(sessionStorage.getItem('isAdminAuthenticated') === 'true');
+      }
+    };
+    checkAdmin();
+    const interval = setInterval(checkAdmin, 1500);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Persisted human handover state
+  const [isHandover, setIsHandover] = useState(() => {
+    try {
+      return localStorage.getItem('visa_hub_handover') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
   const idleTimerRef = useRef<NodeJS.Timeout>();
 
   // Function to send webhook summary
@@ -21,16 +85,35 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
     const lastSubmitted = localStorage.getItem('lastContactFormSubmitted');
     if (!lastSubmitted) return; // Only send if form was submitted
 
-    // Retrieve form details (you might need to store this in localStorage too)
+    // Retrieve form details
     const formDetails = JSON.parse(localStorage.getItem('lastFormDetails') || '{}');
     const history = JSON.parse(localStorage.getItem('visa_hub_chat_history') || '[]');
 
-    await fetch('/api/webhook-summary', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ history, formDetails })
-    });
+    try {
+      await fetch('/api/webhook-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ history, formDetails }),
+        keepalive: true
+      });
+      // Clear after successful send
+      localStorage.removeItem('lastContactFormSubmitted');
+      localStorage.removeItem('lastFormDetails');
+    } catch (e) {
+      console.error("Webhook summary send failed:", e);
+    }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     const resetTimer = () => {
@@ -50,7 +133,7 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
       window.removeEventListener('beforeunload', sendWebhookSummary);
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     };
-  }, []);
+  }, [chatHistory]);
 
   const handleToggle = () => {
     if (isOpen) {
@@ -62,36 +145,13 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
     }
   };
 
-  const [message, setMessage] = useState('');
-  
-  // Persisted chat history state
-  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'bot', content: string, showContactForm?: boolean }[]>(() => {
-    try {
-      const saved = localStorage.getItem('visa_hub_chat_history');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Persisted human handover state
-  const [isHandover, setIsHandover] = useState(() => {
-    try {
-      return localStorage.getItem('visa_hub_handover') === 'true';
-    } catch {
-      return false;
-    }
-  });
-
   const handleSend = async () => {
     if (!message.trim()) return;
 
     const userMessage = message;
     setMessage('');
     
-    const updatedWithUser = [...chatHistory, { role: 'user' as const, content: userMessage }];
+    const updatedWithUser = [...chatHistory, { role: 'user' as const, content: userMessage, timestamp: new Date().toISOString() }];
     setChatHistory(updatedWithUser);
     localStorage.setItem('visa_hub_chat_history', JSON.stringify(updatedWithUser));
     
@@ -106,19 +166,94 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
           history: updatedWithUser.map(h => ({ role: h.role, content: h.content }))
         })
       });
-      const data = await res.json();
-      
-      const updatedWithBot = [...updatedWithUser, { role: 'bot' as const, content: data.reply, showContactForm: data.showContactForm }];
-      setChatHistory(updatedWithBot);
-      localStorage.setItem('visa_hub_chat_history', JSON.stringify(updatedWithBot));
-      
-      if (data.isHumanHandover) {
-        setIsHandover(true);
-        localStorage.setItem('visa_hub_handover', 'true');
+
+      if (!res.ok) throw new Error('Failed to fetch');
+
+      // Check if it's a streaming response
+      const contentType = res.headers.get('Content-Type');
+      if (contentType && contentType.includes('text/event-stream')) {
+        const reader = res.body?.getReader();
+        if (!reader) throw new Error('No reader');
+
+        let accumulatedResponse = '';
+
+        // Add an initial empty bot message to be filled by the stream
+        setChatHistory(prev => [...prev, { role: 'bot' as const, content: '', timestamp: new Date().toISOString() }]);
+
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                
+                if (data.chunk) {
+                  accumulatedResponse += data.chunk;
+                  
+                  setChatHistory(prev => {
+                    const last = prev[prev.length - 1];
+                    if (last && last.role === 'bot') {
+                      const updated = [...prev];
+                      updated[updated.length - 1] = { ...last, content: cleanStreamingText(accumulatedResponse) };
+                      return updated;
+                    }
+                    return prev;
+                  });
+                }
+
+                if (data.done) {
+                  // Final metadata
+                  setChatHistory(prev => {
+                    const last = prev[prev.length - 1];
+                    if (last && last.role === 'bot') {
+                      const updated = [...prev];
+                      updated[updated.length - 1] = { 
+                        ...last, 
+                        content: data.reply, // Use the cleaned full text from server
+                        showContactForm: data.showContactForm,
+                        timestamp: last.timestamp || new Date().toISOString()
+                      };
+                      localStorage.setItem('visa_hub_chat_history', JSON.stringify(updated));
+                      return updated;
+                    }
+                    return prev;
+                  });
+
+                  if (data.isHumanHandover) {
+                    setIsHandover(true);
+                    localStorage.setItem('visa_hub_handover', 'true');
+                  }
+                }
+              } catch (e) {
+                console.error("Error parsing SSE chunk:", e);
+              }
+            }
+          }
+        }
+      } else {
+        // Fallback for non-streaming response
+        const data = await res.json();
+        const updatedWithBot = [...updatedWithUser, { role: 'bot' as const, content: data.reply, showContactForm: data.showContactForm, timestamp: new Date().toISOString() }];
+        setChatHistory(updatedWithBot);
+        localStorage.setItem('visa_hub_chat_history', JSON.stringify(updatedWithBot));
+        
+        if (data.isHumanHandover) {
+          setIsHandover(true);
+          localStorage.setItem('visa_hub_handover', 'true');
+        }
       }
     } catch (error) {
       console.error('Chat error:', error);
-      const updatedWithError = [...updatedWithUser, { role: 'bot' as const, content: 'দুঃখিত, সংযোগে কিছু সমস্যা হচ্ছে। অনুগ্রহ করে আবার চেষ্টা করুন।' }];
+      const updatedWithError = [...chatHistory, 
+        { role: 'user' as const, content: userMessage, timestamp: new Date().toISOString() }, 
+        { role: 'bot' as const, content: 'দুঃখিত, সংযোগে কিছু সমস্যা হচ্ছে। অনুগ্রহ করে আবার চেষ্টা করুন।', timestamp: new Date().toISOString() }
+      ];
       setChatHistory(updatedWithError);
       localStorage.setItem('visa_hub_chat_history', JSON.stringify(updatedWithError));
     } finally {
@@ -134,36 +269,36 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
             initial={{ opacity: 0, scale: 0.95, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 30 }}
-            className="fixed bottom-28 right-6 md:right-8 w-[calc(100vw-48px)] sm:w-[380px] bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden flex flex-col h-[520px] z-[100] transition-colors duration-300"
+            className="fixed bottom-6 right-6 md:bottom-24 md:right-8 w-[calc(100vw-48px)] sm:w-[400px] bg-white dark:bg-slate-900 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden flex flex-col h-[calc(100vh-100px)] max-h-[600px] z-[100] transition-colors duration-300"
           >
             {/* Header */}
-            <div className="bg-blue-600 py-3.5 px-5 text-white flex justify-between items-center shadow-lg shadow-blue-600/10 shrink-0">
+            <div className="bg-blue-600 py-4 px-5 text-white flex justify-between items-center shadow-lg shadow-blue-600/10 shrink-0">
               <div>
-                <h3 className="font-bold text-base md:text-lg font-display">Visa Hub AI Assistant</h3>
-                <p className="text-blue-100 text-xs mt-0.5">সাধারণত তাৎক্ষণিক উত্তর দেয়</p>
+                <h3 className="font-bold text-base md:text-lg font-display">Processing Hub Assistant</h3>
               </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => {
-                    if (window.confirm("আপনি কি চ্যাটের ইতিহাস মুছে ফেলতে চান?")) {
+              <div className="flex items-center gap-1.5">
+                {(isAdmin || isAIStudioPreview) && (
+                  <button
+                    onClick={() => {
                       setChatHistory([]);
                       setIsHandover(false);
                       localStorage.removeItem('visa_hub_chat_history');
                       localStorage.removeItem('visa_hub_handover');
                       localStorage.removeItem('lastContactFormSubmitted');
                       localStorage.removeItem('lastFormDetails');
-                    }
-                  }}
-                  title="চ্যাট ইতিহাস মুছুন"
-                  className="hover:bg-white/10 p-2 rounded-xl transition-colors text-blue-100 hover:text-white"
-                >
-                  <Trash2 size={16} />
-                </button>
+                    }}
+                    title="চ্যাট ইতিহাস মুছুন"
+                    className="hover:bg-red-500/20 p-2 rounded-lg border border-white/20 hover:border-red-400/40 text-red-100 hover:text-red-400 transition-all active:scale-95 flex items-center justify-center shadow-sm"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
                 <button 
                   onClick={handleToggle} 
-                  className="hover:bg-white/10 p-2 rounded-xl transition-colors"
+                  className="hover:bg-white/20 p-2 rounded-lg border border-white/20 transition-all active:scale-95 flex items-center justify-center shadow-sm"
+                  aria-label="Close chat"
                 >
-                  <X size={18} />
+                  <X size={18} className="text-white" />
                 </button>
               </div>
             </div>
@@ -189,6 +324,7 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
                   
                   // Save form details for webhook summary
                   localStorage.setItem('lastFormDetails', JSON.stringify({ name, phone, email, service }));
+                  localStorage.setItem('lastContactFormSubmitted', 'true');
                   
                   // Append a success message from AI explaining lead has been logged
                   const successMessage = {
@@ -217,21 +353,21 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[100]">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleToggle}
-          className={`w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-2xl transition-all ${
-            isOpen 
-              ? 'bg-gray-900 dark:bg-slate-800 text-white shadow-gray-900/10' 
-              : 'bg-blue-600 text-white shadow-blue-600/35 hover:bg-blue-700'
-          }`}
-          title="AI Assistant Chat"
-        >
-          {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-        </motion.button>
-      </div>
+      {!isOpen && (
+        <div className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[100]">
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleToggle}
+            className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-2xl bg-blue-600 text-white shadow-blue-600/35 hover:bg-blue-700 transition-all"
+            title="AI Assistant Chat"
+          >
+            <MessageSquare size={24} />
+          </motion.button>
+        </div>
+      )}
     </>
   );
 }

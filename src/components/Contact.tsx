@@ -135,7 +135,7 @@ export default function Contact() {
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">Message Sent Successfully!</h3>
                     <p className="text-gray-500 max-w-sm">
-                      Thank you for contacting Visa Processing Hub. Our specialist will call you very shortly.
+                      Thank you for contacting Processing Hub. Our specialist will call you very shortly.
                     </p>
                   </div>
                 ) : (

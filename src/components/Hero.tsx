@@ -20,7 +20,7 @@ export default function Hero() {
               className="inline-flex items-center gap-2 px-3 py-1 text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 rounded-full border border-blue-100"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
-              Visa Processing Hub
+              Processing Hub
             </motion.div>
             
             <motion.h1
