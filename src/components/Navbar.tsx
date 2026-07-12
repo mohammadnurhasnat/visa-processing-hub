@@ -85,9 +85,6 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-600/10">
-              <Plane className="text-white w-5 h-5" />
-            </div>
             <span className="text-xl md:text-2xl font-black tracking-tight text-gray-900 font-display transition-colors">
               Processing <span className="text-blue-600">Hub</span>
             </span>

@@ -14,28 +14,28 @@ const services = [
     desc: 'General tourism and sightseeing visas for exploring the beauty of India.',
     color: 'bg-blue-50 text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white',
     image: touristBg,
-    rates: { slot: '৳6,000', full: '৳8,000' }
+    rates: { slot: '৳4,500', full: '৳6,000' }
   },
   {
     title: 'Medical Visa',
     desc: 'Specialized hospital + attendant visas with fast-track processing for urgent care.',
     color: 'bg-red-50 text-red-600 border border-red-100 group-hover:bg-red-600 group-hover:text-white',
     image: medicalBg,
-    rates: { slot: '৳6,000', full: '৳8,000' }
+    rates: { slot: '৳5,000', full: '৳7,000' }
   },
   {
     title: 'Double Entry Visa',
     desc: 'Convenient double entry visas for embassy interviews and multiple visits.',
     color: 'bg-green-50 text-green-600 border border-green-100 group-hover:bg-green-600 group-hover:text-white',
     image: doubleEntryBg,
-    rates: { slot: '৳25,000', full: '৳28,500' }
+    rates: { slot: '৳13,000', full: '৳16,500' }
   },
   {
     title: 'Business Visa',
     desc: 'Official visas for business meetings, trade fairs, and international conferences.',
     color: 'bg-purple-50 text-purple-600 border border-purple-100 group-hover:bg-purple-600 group-hover:text-white',
     image: businessBg,
-    rates: { slot: '৳6,000', full: '৳8,000' }
+    rates: { slot: '৳5,000', full: '৳7,500' }
   },
   {
     title: 'Visa Documentation',
@@ -43,10 +43,10 @@ const services = [
     color: 'bg-orange-50 text-orange-600 border border-orange-100 group-hover:bg-orange-600 group-hover:text-white',
     image: visaDocBg,
     docRates: [
-      { label: 'Tourist Visa', price: '৳2,000' },
-      { label: 'Medical Visa', price: '৳2,500' },
-      { label: 'Business Visa', price: '৳3,000' },
-      { label: 'Double Entry Visa', price: '৳4,500' }
+      { label: 'Tourist Visa', price: '৳1,500' },
+      { label: 'Medical Visa', price: '৳2,000' },
+      { label: 'Business Visa', price: '৳2,500' },
+      { label: 'Double Entry Visa', price: '৳3,500' }
     ]
   },
   {
@@ -59,6 +59,7 @@ const services = [
 
 export default function Services() {
   const [bookingService, setBookingService] = useState<string | null>(null);
+  const [selectedDocCategory, setSelectedDocCategory] = useState<string>('Tourist Visa');
   return (
     <section id="services" className="pt-32 pb-24 md:pt-36 md:pb-28 bg-gradient-to-b from-white to-gray-50/50 border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -123,14 +124,32 @@ export default function Services() {
                 {service.docRates && (
                   <div className="my-4 pt-4 border-t border-gray-200 space-y-2 mix-blend-multiply">
                     <p className="text-xs text-gray-600 font-semibold mb-2">Only Documentation Rates:</p>
-                    <ul className="space-y-2">
-                      {service.docRates.map((rate, idx) => (
-                        <li key={idx} className="flex justify-between items-center text-xs">
-                          <span className="text-gray-700 flex items-center gap-1"><CheckCircle size={12} className="text-orange-500" /> {rate.label}</span>
-                          <span className="font-extrabold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">{rate.price}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="space-y-2">
+                      {service.docRates.map((rate, idx) => {
+                        const isSelected = selectedDocCategory === rate.label;
+                        return (
+                          <div 
+                            key={idx} 
+                            onClick={() => setSelectedDocCategory(rate.label)}
+                            className={`flex justify-between items-center text-xs p-2 rounded-xl border transition-all cursor-pointer ${
+                              isSelected ? 'border-orange-400 bg-orange-50/70 font-bold shadow-sm shadow-orange-500/5' : 'border-gray-100 hover:bg-gray-50/80'
+                            }`}
+                          >
+                            <span className="text-gray-700 flex items-center gap-2">
+                              <input 
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => setSelectedDocCategory(rate.label)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="h-3.5 w-3.5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer"
+                              />
+                              {rate.label}
+                            </span>
+                            <span className="font-extrabold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">{rate.price}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
@@ -168,7 +187,7 @@ export default function Services() {
             >
               <h3 className="text-sm font-bold text-gray-900 mb-1">সার্ভিস বুকিং নিশ্চিতকরণ</h3>
               <p className="text-xs text-gray-600 mb-4">
-                আপনি কি নিশ্চিত যে আপনি <strong>{bookingService}</strong> বুক করতে চান?
+                আপনি কি নিশ্চিত যে আপনি <strong>{bookingService === 'Visa Documentation' ? `${bookingService} (${selectedDocCategory})` : bookingService}</strong> বুক করতে চান?
               </p>
               <div className="flex gap-2 justify-end">
                 <button
@@ -179,7 +198,8 @@ export default function Services() {
                 </button>
                 <button
                   onClick={() => {
-                    window.dispatchEvent(new CustomEvent('TRIGGER_CHAT', { detail: `আমি ${bookingService} বুক করতে চাই` }));
+                    const bookingDetail = bookingService === 'Visa Documentation' ? `${bookingService} (${selectedDocCategory})` : bookingService;
+                    window.dispatchEvent(new CustomEvent('TRIGGER_CHAT', { detail: `আমি ${bookingDetail} বুক করতে চাই` }));
                     setBookingService(null);
                   }}
                   className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors shadow-sm cursor-pointer"

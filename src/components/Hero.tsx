@@ -1,6 +1,5 @@
 import { motion } from 'motion/react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
-import AnimatedVehicles from './AnimatedVehicles';
 
 export default function Hero() {
   return (
@@ -10,7 +9,6 @@ export default function Hero() {
       <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-cyan-50/40 rounded-full filter blur-3xl -z-10"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <AnimatedVehicles />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* Left Side: Elegant typography & action elements */}

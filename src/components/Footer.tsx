@@ -9,9 +9,6 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row justify-between items-start gap-8 pb-8 border-b border-gray-200 mb-8">
           <div className="space-y-3 max-w-md">
             <div className="flex items-center gap-2.5">
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <Plane className="text-white w-5 h-5" />
-              </div>
               <span className="text-xl font-black tracking-tight text-gray-900 font-display">
                 Processing <span className="text-blue-600">Hub</span>
               </span>
