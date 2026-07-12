@@ -51,8 +51,62 @@ app.post("/api/contact", (req, res) => {
   res.json({ success: true, lead: newLead });
 });
 
-app.post("/api/webhook-summary", (req, res) => {
-  res.json({ success: true });
+app.post("/api/webhook-summary", async (req, res) => {
+  try {
+    const { history, formDetails } = req.body;
+    
+    // Convert history to string
+    const historyStr = (history || []).map((h: any) => `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`).join('\n');
+    
+    const prompt = `
+Analyze the following chat history and contact form details for an Indian Visa processing agency.
+Extract a concise summary of what the customer wants, their requested service, and their contact information.
+Return the result STRICTLY as a JSON object with the following keys:
+- name (string)
+- phone (string)
+- email (string)
+- requested_service (string)
+- customer_intent_summary (string)
+
+Contact Form Details:
+${JSON.stringify(formDetails, null, 2)}
+
+Chat History:
+${historyStr}
+`;
+
+    const result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    const summaryJson = result.text || "{}";
+    
+    // Try to send to webhook if configured
+    const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+    if (webhookUrl) {
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: summaryJson
+        });
+        console.log("Sent summary to Make.com webhook");
+      } catch (e) {
+        console.error("Failed to send to webhook:", e);
+      }
+    } else {
+      console.log("MAKE_WEBHOOK_URL not configured. Summary that would be sent:", summaryJson);
+    }
+    
+    res.json({ success: true, summary: JSON.parse(summaryJson) });
+  } catch (error) {
+    console.error("Webhook summary error:", error);
+    res.status(500).json({ error: "Failed to generate summary" });
+  }
 });
 
 app.post("/api/chat", async (req, res) => {
@@ -61,13 +115,15 @@ app.post("/api/chat", async (req, res) => {
     let userMsg = (message || "").toLowerCase().trim();
 
     const systemInstruction = `
-You are a helpful, professional visa processing assistant for "Visa Hub" (Processing Hub) located at Level: 3/A, Jamuna Future Park, Dhaka-1229. You answer questions mostly in Bengali (বাংলা).
+You are a helpful, professional visa processing assistant for "Processing Hub" located at Level: 3/A, Jamuna Future Park, Dhaka-1229. You answer questions mostly in Bengali (বাংলা).
 
 CORE RULES:
 1. NEVER mention visa processing fees, costs, or prices upfront. ONLY mention them if the user explicitly asks about cost, fee, price, or "কত টাকা". 
    - If they ask for costs, use these rates: 
-     Tourist/Medical/Business: Only slot - 6000 BDT, Full processing with documents - 8000 BDT. 
-     Double Entry: Only slot - 25000 BDT, Full processing - 28500 BDT.
+     Tourist Visa: Only Documentation - 2000 BDT, Only slot - 6000 BDT, Full processing with documents - 8000 BDT.
+     Medical Visa: Only Documentation - 2500 BDT, Only slot - 6000 BDT, Full processing with documents - 8000 BDT.
+     Business Visa: Only Documentation - 3000 BDT, Only slot - 6000 BDT, Full processing with documents - 8000 BDT. 
+     Double Entry Visa: Only Documentation - 4500 BDT, Only slot - 25000 BDT, Full processing - 28500 BDT.
 2. If the user asks for required documents, provide the following information:
    - Tourist Visa: Passport (min 6 months validity), NID/Birth Certificate, 2x2 inch photo, Utility Bill, Bank statement (min 6 months) or Dollar Endorsement, NOC letter (if employed), Trade License (if business), previous Indian visa (if any).
    - Medical Visa: Same as Tourist, plus Medical documents/Doctor's prescription and Appointment letter.
@@ -77,7 +133,7 @@ CORE RULES:
 4. If the user greets you with a Salam (e.g., "Assalamualaikum", "সালাম", "আসসালামু আলাইকুম"), your response MUST start with "Waalaikum assalam" (অথবা "ওয়ালাইকুম আসসালাম").
 5. Keep your answers concise, helpful, and polite. 
 6. Always ask clarifying questions if the user's intent is unclear.
-7. If the user wants to submit their contact info or talk to a human, output [SHOW_CONTACT_FORM].
+7. If the user wants to submit their contact info, talk to a human, or book a specific service (e.g. "আমি Tourist Visa বুক করতে চাই"), acknowledge their request and immediately output [SHOW_CONTACT_FORM] to collect their details.
     `;
 
     res.setHeader("Content-Type", "text/event-stream");

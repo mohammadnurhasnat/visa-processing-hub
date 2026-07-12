@@ -76,7 +76,7 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm sm:text-base text-gray-700 leading-relaxed">
               <li className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2.5">
                 <span className="font-bold text-gray-950 sm:min-w-[90px] shrink-0">Phone:</span> 
-                <span className="text-gray-700 font-semibold">+09643848934</span>
+                <span className="text-gray-700 font-semibold">+8801332601510</span>
               </li>
               <li className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2.5">
                 <span className="font-bold text-gray-950 sm:min-w-[90px] shrink-0">WhatsApp:</span> 
@@ -86,7 +86,7 @@ export default function Footer() {
               </li>
               <li className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2.5">
                 <span className="font-bold text-gray-950 sm:min-w-[90px] shrink-0">Email:</span> 
-                <span className="text-gray-700 font-medium break-all">visaprocessinghub@gmail.com</span>
+                <span className="text-gray-700 font-medium break-all">processinghubbd@gmail.com</span>
               </li>
               <li className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2.5">
                 <span className="font-bold text-gray-950 sm:min-w-[90px] shrink-0">Location:</span> 

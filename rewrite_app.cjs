@@ -1,4 +1,6 @@
-/**
+const fs = require('fs');
+
+const appContent = `/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -76,3 +78,6 @@ export default function App() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/App.tsx', appContent);

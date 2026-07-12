@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ChatHistoryList from './ChatHistoryList';
@@ -105,6 +105,19 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
   };
 
   useEffect(() => {
+    const handleTrigger = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const text = customEvent.detail;
+      if (onOpen) onOpen();
+      else setInternalIsOpen(true);
+      
+      handleSend(text);
+    };
+    window.addEventListener('TRIGGER_CHAT', handleTrigger);
+    return () => window.removeEventListener('TRIGGER_CHAT', handleTrigger);
+  }, [chatHistory, onOpen]);
+
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -145,11 +158,11 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
     }
   };
 
-  const handleSend = async () => {
-    if (!message.trim()) return;
-
-    const userMessage = message;
-    setMessage('');
+  const handleSend = async (overrideMessage?: string | React.MouseEvent | React.KeyboardEvent) => {
+    const textToSend = typeof overrideMessage === 'string' ? overrideMessage : message;
+    if (!textToSend.trim()) return;
+    if (typeof overrideMessage !== 'string') setMessage('');
+    const userMessage = textToSend;
     
     const updatedWithUser = [...chatHistory, { role: 'user' as const, content: userMessage, timestamp: new Date().toISOString() }];
     setChatHistory(updatedWithUser);
@@ -325,6 +338,9 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
                   // Save form details for webhook summary
                   localStorage.setItem('lastFormDetails', JSON.stringify({ name, phone, email, service }));
                   localStorage.setItem('lastContactFormSubmitted', 'true');
+                  
+                  // Trigger webhook summary immediately
+                  sendWebhookSummary();
                   
                   // Append a success message from AI explaining lead has been logged
                   const successMessage = {

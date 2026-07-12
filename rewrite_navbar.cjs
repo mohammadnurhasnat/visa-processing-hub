@@ -1,4 +1,6 @@
-import { motion, AnimatePresence } from 'motion/react';
+const fs = require('fs');
+
+const navbarContent = `import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Plane, PhoneCall } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -100,7 +102,7 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
                 key={link.id}
                 href={link.target} 
                 onClick={(e) => handleScroll(e, link.target)} 
-                className={`font-medium transition-colors relative py-2 ${activeSection === link.id ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
+                className={\`font-medium transition-colors relative py-2 \${activeSection === link.id ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}\`}
               >
                 {link.label}
                 {activeSection === link.id && (
@@ -119,7 +121,7 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
               Admin Panel
             </button>
             
-            <a href="tel:+8801332601510" className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-600/15 text-sm ml-2">
+            <a href="tel:+09643848934" className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-600/15 text-sm ml-2">
               <PhoneCall size={16} />
               Call Support
             </a>
@@ -166,7 +168,7 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
                     transition={{ delay: 0.1 + index * 0.05, duration: 0.3 }}
                     href={link.target} 
                     onClick={(e) => { setIsOpen(false); handleScroll(e, link.target); }} 
-                    className={`font-semibold text-lg py-3 border-l-4 rounded-r-xl w-full max-w-[240px] px-6 transition-colors shadow-sm ${activeSection === link.id ? 'border-blue-600 bg-blue-50/50 text-blue-700' : 'border-transparent text-gray-800 bg-white hover:bg-gray-50 border-gray-100'}`}
+                    className={\`font-semibold text-lg py-3 border-l-4 rounded-r-xl w-full max-w-[240px] px-6 transition-colors shadow-sm \${activeSection === link.id ? 'border-blue-600 bg-blue-50/50 text-blue-700' : 'border-transparent text-gray-800 bg-white hover:bg-gray-50 border-gray-100'}\`}
                   >
                     {link.label}
                   </motion.a>
@@ -186,7 +188,7 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 + navLinks.length * 0.05, duration: 0.3 }}
-                  href="tel:+8801332601510" 
+                  href="tel:+09643848934" 
                   onClick={() => setIsOpen(false)} 
                   className="bg-[#25D366] hover:bg-[#128C7E] text-white px-8 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 w-full max-w-[240px] mt-6"
                 >
@@ -201,3 +203,6 @@ export default function Navbar({ onOpenAdmin }: NavbarProps) {
     </nav>
   );
 }
+`;
+
+fs.writeFileSync('src/components/Navbar.tsx', navbarContent);

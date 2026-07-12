@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import AnimatedVehicles from './AnimatedVehicles';
 
 export default function Hero() {
   return (
@@ -9,6 +10,7 @@ export default function Hero() {
       <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-cyan-50/40 rounded-full filter blur-3xl -z-10"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <AnimatedVehicles />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* Left Side: Elegant typography & action elements */}
@@ -49,7 +51,6 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.25 }}
               className="flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-2.5 text-sm text-gray-500 font-medium pt-2"
             >
-              <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-blue-500" /> Government Registered</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-blue-500" /> No Hidden Charges</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-blue-500" /> 24/7 Priority Support</span>
             </motion.div>
@@ -71,7 +72,7 @@ export default function Hero() {
                 href="https://wa.me/8801332601510" 
                 target="_blank" 
                 rel="noreferrer" 
-                className="w-full sm:w-auto bg-white text-gray-800 border border-gray-200 px-8 py-4 rounded-2xl font-bold text-base hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 shadow-sm text-center cursor-pointer"
+                className="w-full sm:w-auto bg-[#25D366] text-white px-8 py-4 rounded-2xl font-bold text-base hover:bg-[#128C7E] transition-all flex items-center justify-center gap-2 shadow-sm text-center cursor-pointer"
               >
                 WhatsApp Support
               </a>
@@ -100,16 +101,16 @@ export default function Hero() {
               
               {/* Overlay Glass Badge 1 - Top Left */}
               <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-lg border border-gray-100/80 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-base">98%</div>
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-base">100%</div>
                 <div>
-                  <p className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Visa Success</p>
-                  <p className="text-xs font-bold text-gray-800 leading-none mt-0.5">Verified Rate</p>
+                  <p className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Proper</p>
+                  <p className="text-xs font-bold text-gray-800 leading-none mt-0.5">Documentation</p>
                 </div>
               </div>
 
               {/* Overlay Glass Badge 2 - Bottom Right */}
               <div className="absolute bottom-6 right-6 bg-white/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-lg border border-gray-100/80 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-base">10k+</div>
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-base">4k+</div>
                 <div>
                   <p className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Happy Clients</p>
                   <p className="text-xs font-bold text-gray-800 leading-none mt-0.5">Across BD</p>
@@ -117,7 +118,6 @@ export default function Hero() {
               </div>
             </motion.div>
           </div>
-
         </div>
 
         {/* 4 Sleek Minimalist Statistics Inline Cards to keep height thin and responsive */}
@@ -128,10 +128,10 @@ export default function Hero() {
           className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-5xl mx-auto mt-16 pt-12 border-t border-gray-100/80"
         >
           {[
-            { label: 'Happy Clients', value: '10k+', desc: 'Across Bangladesh' },
-            { label: 'Visa Success', value: '98%', desc: 'Verified application rate' },
-            { label: 'Tours Covered', value: '50+', desc: 'Specialized tourist spots' },
-            { label: 'Years Experience', value: '12+', desc: 'Experienced visa support' },
+            { label: 'Happy Clients', value: '4k+', desc: '' },
+            { label: 'Accurate guidelines', value: '100%', desc: '' },
+            { label: 'Tours Covered', value: '10+', desc: '' },
+            { label: 'Years Experience', value: '4+', desc: '' },
           ].map((stat, i) => (
             <div 
               key={i} 

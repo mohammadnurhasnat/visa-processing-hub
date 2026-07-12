@@ -87,7 +87,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-blue-200 text-xs uppercase tracking-widest font-bold">Call Us</p>
-                      <p className="text-base md:text-lg font-bold group-hover/item:text-cyan-100 transition-colors">+09643848934</p>
+                      <p className="text-base md:text-lg font-bold group-hover/item:text-cyan-100 transition-colors">+8801332601510</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 group/item cursor-pointer">
@@ -96,7 +96,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-blue-200 text-xs uppercase tracking-widest font-bold">Email Us</p>
-                      <p className="text-base md:text-lg font-bold group-hover/item:text-cyan-100 transition-colors">visaprocessinghub@gmail.com</p>
+                      <p className="text-base md:text-lg font-bold group-hover/item:text-cyan-100 transition-colors">processinghubbd@gmail.com</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 group/item cursor-pointer">
