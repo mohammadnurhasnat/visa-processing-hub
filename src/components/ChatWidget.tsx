@@ -377,10 +377,10 @@ export default function ChatWidget({ isOpen: propIsOpen, onClose, onOpen }: Chat
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleToggle}
-            className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-2xl bg-blue-600 text-white shadow-blue-600/35 hover:bg-blue-700 transition-all"
+            className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-2xl bg-blue-600 text-white shadow-blue-600/35 hover:bg-blue-700 transition-all cursor-pointer"
             title="AI Assistant Chat"
           >
-            <MessageSquare size={24} />
+            <MessageSquare className="w-4 h-4 md:w-5 md:h-5" />
           </motion.button>
         </div>
       )}

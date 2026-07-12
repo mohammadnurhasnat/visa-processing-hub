@@ -60,7 +60,7 @@ export default function Packages() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
-              className="bg-white rounded-[2rem] overflow-hidden border border-gray-200/90 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.05)] hover:border-blue-200 hover:-translate-y-2 transition-all duration-300 group"
+              className="bg-white rounded-[10px] overflow-hidden border border-gray-200/90 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.05)] hover:border-blue-200 hover:-translate-y-2 transition-all duration-300 group"
             >
               <div className="relative h-72 overflow-hidden">
                 <img 
@@ -93,7 +93,7 @@ export default function Packages() {
                   </div>
                 </div>
 
-                <button className="w-full bg-blue-50 text-blue-600 font-bold py-4 rounded-2xl hover:bg-blue-600 hover:text-white transition-all cursor-pointer shadow-sm">
+                <button className="w-full bg-blue-50 text-blue-600 font-bold py-4 rounded-[10px] hover:bg-blue-600 hover:text-white transition-all cursor-pointer shadow-sm">
                   Check Details
                 </button>
               </div>

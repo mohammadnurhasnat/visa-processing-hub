@@ -66,10 +66,10 @@ export default function App() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             onClick={scrollToTop}
-            className="fixed bottom-6 left-6 z-40 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all cursor-pointer flex items-center justify-center"
+            className="fixed bottom-6 left-6 z-40 bg-blue-600 text-white w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all cursor-pointer flex items-center justify-center"
             aria-label="Back to top"
           >
-            <ArrowUp size={24} />
+            <ArrowUp className="w-4 h-4 md:w-5 md:h-5" />
           </motion.button>
         )}
       </AnimatePresence>

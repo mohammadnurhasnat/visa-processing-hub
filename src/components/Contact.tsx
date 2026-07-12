@@ -55,7 +55,7 @@ export default function Contact() {
   return (
     <section id="contact" className="py-24 bg-gradient-to-b from-gray-50 to-white border-t border-gray-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-blue-600 rounded-[3rem] overflow-hidden relative shadow-2xl shadow-blue-600/20 border border-blue-500/50 group/card">
+        <div className="bg-blue-600 rounded-[10px] overflow-hidden relative shadow-2xl shadow-blue-600/20 border border-blue-500/50 group/card">
           {/* Abstract Premium Decorations */}
           <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-blue-400 rounded-full -mr-36 -mt-36 mix-blend-screen filter blur-3xl opacity-40 group-hover/card:scale-105 transition-transform duration-1000"></div>
           <div className="absolute bottom-0 left-0 w-[450px] h-[450px] bg-blue-800 rounded-full -ml-36 -mb-36 mix-blend-multiply filter blur-3xl opacity-50 group-hover/card:scale-105 transition-transform duration-1000"></div>
@@ -80,40 +80,40 @@ export default function Contact() {
                   Get in touch with our travel experts for a free consultation. We'll help you plan the perfect trip and handle all documentation.
                 </p>
 
-                <div className="space-y-5">
-                  <div className="flex items-center gap-4 group/item cursor-pointer">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center border border-white/15 shrink-0 group-hover/item:bg-white group-hover/item:text-blue-600 group-hover/item:scale-105 transition-all duration-300 shadow-inner">
-                      <Phone size={20} />
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3.5 group/item cursor-pointer">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/15 shrink-0 group-hover/item:bg-white group-hover/item:text-blue-600 group-hover/item:scale-105 transition-all duration-300 shadow-inner">
+                      <Phone size={16} />
                     </div>
                     <div>
-                      <p className="text-blue-200 text-xs uppercase tracking-widest font-bold">Call Us</p>
-                      <p className="text-base md:text-lg font-bold group-hover/item:text-cyan-100 transition-colors">+8801332601510</p>
+                      <p className="text-blue-200 text-[10px] uppercase tracking-widest font-bold">Call Us</p>
+                      <p className="text-sm sm:text-base font-bold group-hover/item:text-cyan-100 transition-colors break-all">+8801332601510</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 group/item cursor-pointer">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center border border-white/15 shrink-0 group-hover/item:bg-white group-hover/item:text-blue-600 group-hover/item:scale-105 transition-all duration-300 shadow-inner">
-                      <Mail size={20} />
+                  <div className="flex items-center gap-3.5 group/item cursor-pointer">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/15 shrink-0 group-hover/item:bg-white group-hover/item:text-blue-600 group-hover/item:scale-105 transition-all duration-300 shadow-inner">
+                      <Mail size={16} />
                     </div>
-                    <div>
-                      <p className="text-blue-200 text-xs uppercase tracking-widest font-bold">Email Us</p>
-                      <p className="text-base md:text-lg font-bold group-hover/item:text-cyan-100 transition-colors">processinghubbd@gmail.com</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-blue-200 text-[10px] uppercase tracking-widest font-bold">Email Us</p>
+                      <p className="text-sm sm:text-base font-bold group-hover/item:text-cyan-100 transition-colors break-all">processinghubbd@gmail.com</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 group/item cursor-pointer">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center border border-white/15 shrink-0 group-hover/item:bg-white group-hover/item:text-blue-600 group-hover/item:scale-105 transition-all duration-300 shadow-inner">
-                      <MapPin size={20} />
+                  <div className="flex items-center gap-3.5 group/item cursor-pointer">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/15 shrink-0 group-hover/item:bg-white group-hover/item:text-blue-600 group-hover/item:scale-105 transition-all duration-300 shadow-inner">
+                      <MapPin size={16} />
                     </div>
                     <div>
-                      <p className="text-blue-200 text-xs uppercase tracking-widest font-bold">Visit Us</p>
-                      <p className="text-base md:text-lg font-bold group-hover/item:text-cyan-100 transition-colors leading-snug">Level: 3/A, Jamuna Future Park, Dhaka-1229</p>
+                      <p className="text-blue-200 text-[10px] uppercase tracking-widest font-bold">Visit Us</p>
+                      <p className="text-sm sm:text-base font-bold group-hover/item:text-cyan-100 transition-colors leading-snug">Level: 3/A, Jamuna Future Park, Dhaka-1229</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-10 flex gap-3.5">
+                <div className="mt-10 flex justify-center gap-3.5">
                   {[Facebook, Instagram, Twitter].map((Icon, i) => (
-                    <a key={i} href="#" className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center hover:bg-white text-white hover:text-blue-600 hover:-translate-y-1 transition-all duration-300 border border-white/10 shadow-sm">
-                      <Icon size={18} />
+                    <a key={i} href="#" className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center hover:bg-white text-white hover:text-blue-600 hover:-translate-y-1 transition-all duration-300 border border-white/10 shadow-sm">
+                      <Icon size={16} />
                     </a>
                   ))}
                 </div>
@@ -121,7 +121,7 @@ export default function Contact() {
             </div>
 
             {/* Form (Takes 7 cols on lg) */}
-            <div className="lg:col-span-7 bg-white p-6 sm:p-10 md:p-12 lg:p-14 m-4 md:m-6 rounded-[2.5rem] border border-blue-100/50 shadow-2xl shadow-blue-950/10 transition-all duration-300">
+            <div className="lg:col-span-7 bg-white p-6 sm:p-10 md:p-12 lg:p-14 m-4 md:m-6 rounded-[10px] border border-blue-100/50 shadow-2xl shadow-blue-950/10 transition-all duration-300">
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
